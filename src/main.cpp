@@ -14,9 +14,9 @@
 #define G5 "89dae597"
 #define R5 "95ad98"
 #define B6 "19292099"
+
 #define RID1 "29dc6199"
 #define RID2 "6997e397"
-#define ZERO "00000000"
 
 const char *ssid = "Discovery Driven";
 const char *password = "123456789";
@@ -48,9 +48,6 @@ int countLevel2 = 0;
 int countLevel3 = 0;
 int countLevel4 = 0;
 int countLevel5 = 0;
-
-byte metal_sensor = 1;
-bool ir_sensor;
 
 int level = 1;
 String instructions = "";
@@ -98,6 +95,16 @@ bool isRigidForm();
 bool isBlackPlastic();
 bool objectDetected();
 void loop2(void *pvParameters);
+String check_rfid_available();
+int getRandomExcluding(int lowerBound, int upperBound, int excludedValue)
+{
+  int randomValue;
+  do
+  {
+    randomValue = random(lowerBound, upperBound);
+  } while (randomValue == excludedValue);
+  return randomValue;
+}
 
 void closeGate()
 {
@@ -119,8 +126,6 @@ void gate()
 
 MFRC522 mfrc522_1(SS_PIN, RST_PIN);
 Ultrasonic ultrasonic(4, 5);
-
-String check_rfid_available();
 
 void setup()
 {
@@ -151,9 +156,6 @@ void setup()
   );
   SPI.begin();
   mfrc522_1.PCD_Init();
-  randomNumberLvl1 = random(0, 3);
-  randomNumberLvl2 = random(0, 5);
-  randomNumberLvl3 = 0;
 
   ESP32PWM::allocateTimer(3);
   myservo.setPeriodHertz(50);          // standard 50 hz servo
@@ -167,36 +169,34 @@ void loop2(void *pvParameters)
   {
     // Handle client requests
     server.handleClient();
-    // Serial.println("Request");
-    // delay(100);
   }
 }
 
 void loop()
 {
 
-  // switch (currentLevel)
-  // {
-  // case 1:
-  //   level1();
-  //   break;
-  // case 2:
-  //   level2();
-  //   break;
-  // case 3:
-  //   level3();
-  //   break;
-  // case 4:
-  //   level4();
-  //   break;
-  // case 5:
-  //   level5();
-  //   break;
-  // default:
-  // feedbackMsg = "You Win! Game Completed.";
-  //   break;
-  // }
-  level3();
+  switch (currentLevel)
+  {
+  case 1:
+    level1();
+    break;
+  case 2:
+    level2();
+    break;
+  case 3:
+    level3();
+    break;
+  case 4:
+    level4();
+    break;
+  case 5:
+    level5();
+    break;
+  default:
+    feedbackMsg = "You Win! Game Completed.";
+    break;
+  }
+  // level3();
 }
 
 void level1()
@@ -236,7 +236,8 @@ void level1()
           {
             Serial.println("Red detected, Well done!");
             feedbackMsg = "Well Done!";
-            randomNumberLvl1 = random(0, 3);
+            //randomNumberLvl1 = random(0, 3);
+            randomNumberLvl1 = getRandomExcluding(0,3,0);
             success = true;
             gate();
           }
@@ -246,7 +247,8 @@ void level1()
           {
             Serial.println("Green detected, Well done!");
             feedbackMsg = "Well Done!";
-            randomNumberLvl1 = random(0, 3);
+            //randomNumberLvl1 = random(0, 3);
+            randomNumberLvl1 = getRandomExcluding(0,3,1);
             success = true;
             gate();
           }
@@ -256,7 +258,8 @@ void level1()
           {
             Serial.println("Blue detected, Well done!");
             feedbackMsg = "Well Done!";
-            randomNumberLvl1 = random(0, 3);
+            //randomNumberLvl1 = random(0, 3);
+            randomNumberLvl1 = getRandomExcluding(0,3,2);
             success = true;
             gate();
           }
@@ -344,7 +347,8 @@ void level2()
           {
             Serial.println("RFID card for Number 1 detected, Well done!");
             feedbackMsg = "Well done!";
-            randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            //randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            randomNumberLvl2 = getRandomExcluding(1,7,1);
             success = true;
             gate();
           }
@@ -354,7 +358,8 @@ void level2()
           {
             Serial.println("RFID card for Number 2 detected, Well done!");
             feedbackMsg = "Well done!";
-            randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            //randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            randomNumberLvl2 = getRandomExcluding(1,7,2);
             success = true;
             gate();
           }
@@ -364,7 +369,8 @@ void level2()
           {
             Serial.println("RFID card for Number 3 detected, Well done!");
             feedbackMsg = "Well done!";
-            randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            //randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            randomNumberLvl2 = getRandomExcluding(1,7,3);
             success = true;
             gate();
           }
@@ -374,7 +380,8 @@ void level2()
           {
             Serial.println("RFID card for Number 4 detected, Well done!");
             feedbackMsg = "Well done!";
-            randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            //randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            randomNumberLvl2 = getRandomExcluding(1,7,4);
             success = true;
             gate();
           }
@@ -384,7 +391,8 @@ void level2()
           {
             Serial.println("RFID card for Number 5 detected, Well done!");
             feedbackMsg = "Well done!";
-            randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            //randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            randomNumberLvl2 = getRandomExcluding(1,7,5);
             success = true;
             gate();
           }
@@ -394,7 +402,8 @@ void level2()
           {
             Serial.println("RFID card for Number 6 detected, Well done!");
             feedbackMsg = "Well done!";
-            randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            //randomNumberLvl2 = random(1, 7); // Generates a number between 1 and 6
+            randomNumberLvl2 = getRandomExcluding(1,7,6);
             success = true;
             gate();
           }
@@ -471,7 +480,7 @@ void level3()
             Serial.println("Metal detected, Well done!");
             feedbackMsg = "Well done!";
             gate();
-            randomMaterial = random(0, 4);
+            randomMaterial = getRandomExcluding(0,4,0);
             success = true;
           }
           break;
@@ -481,7 +490,7 @@ void level3()
             Serial.println("Black plastic detected, Well done!");
             feedbackMsg = "Well done!";
             gate();
-            randomMaterial = random(0, 4);
+            randomMaterial = getRandomExcluding(0,4,1);
             success = true;
           }
           break;
@@ -491,7 +500,8 @@ void level3()
             Serial.println("Rigid Form detected, Well done!");
             feedbackMsg = "Well done!";
             gate();
-            randomMaterial = random(0, 4);
+
+            randomMaterial = getRandomExcluding(0,4,2);
             success = true;
           }
           break;
@@ -502,7 +512,7 @@ void level3()
             Serial.println("Wood detected, Well done!");
             feedbackMsg = "Well done!";
             gate();
-            randomMaterial = random(0, 4);
+            randomMaterial = getRandomExcluding(0,4,3);
             success = true;
           }
           break;
